@@ -78,21 +78,25 @@ int main(int argc, char **argv)
     FILE *file;
 	int ret;
 	if (argc != 2)
-		error(NULL,"Error: argument\n");
+		return(error(NULL,"Error: argument\n"));
     file=fopen(argv[1],"r");
-    fscanf(file,"%d %d %c",&zone.width,&zone.height,&zone.background);
-    if ((zone.width<0 && zone.width>300) || (zone.height<0 && zone.height>300))
-        error(file,"Error: Operation file corrupted\n");
+    ret = fscanf(file,"%d %d %c",&zone.width,&zone.height,&zone.background);
+	if (ret!=3)
+		return(error(file,"Error: Operation file corrupted\n"));
+    if ((zone.width<0 || zone.width>300) || (zone.height<0 || zone.height>300))
+        return(error(file,"Error: Operation file corrupted\n"));
     char drawing_zone[zone.width*zone.height];
     int i=0;
     while(i<zone.width*zone.height)
         drawing_zone[i++]=zone.background;
-    while(fscanf(file," %c %f %f %f %c",&circle.type,&circle.x,&circle.y,&circle.radius,&circle.c)==5)
+    while((ret=fscanf(file," %c %f %f %f %c",&circle.type,&circle.x,&circle.y,&circle.radius,&circle.c))==5)
     {
         if (circle.radius <= 0.00000000 || (circle.type != 'c' && circle.type != 'C'))
-			error(file,"Error: Operation file corrupted\n");
+			return(error(file,"Error: Operation file corrupted\n"));
 		draw_circle(&zone, drawing_zone, &circle);
     }
+	if(ret!=-1)
+		return(error(file,"Error: Operation file corrupted4\n"));
     i = 0;
 	while (i < zone.height)
 	{
