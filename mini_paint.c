@@ -1,108 +1,87 @@
-#include<stdio.h>
-#include<unistd.h>
-#include<string.h>
-#include<stdlib.h>
-#include<math.h>
-typedef struct zone
-{
-    int width;
-    int height;
-    char background;
-}               t_zone;
+#include "mini_paint.h"
 
-typedef struct circle
+void ft_putstr(char *s)
 {
-    char type;
-    float  x;
-    float  y;
-    float radius;
-    char  c;
-
-}              t_circle;
-void ft_putstr(char *str)
-{
-	int i=0;
-	while(str[i]!='\0')
-	{
-		write(1,&str[i],1);
-		i++;
-	}
-}
-int  check_in_circle(float x, float y, t_circle *circle)
-{
-	float	distance;
-
-	distance = sqrtf(powf(x - circle->x, 2.) + powf(y - circle->y, 2.));
-	if (distance - circle->radius<=0)
-	{
-		if ((circle->radius - distance) < 1.00000000)
-			return (2);
-		return (1);
-	}
-	return (0);
-}
-
-void draw_circle(t_zone *zone, char *drawing, t_circle *circle)
-{
-	int	y;
-	int	x;
-	int	in_circle;
-
-	y = 0;
-	while (y < zone->height)
-	{
-		x = 0;
-		while (x < zone->width)
-		{
-			in_circle = check_in_circle((float)x, (float)y, circle);
-			if (circle->type == 'C' && in_circle != 0)
-				drawing[(y * zone->width) + x] = circle->c;
-            if (circle->type == 'c' && in_circle==2)
-				drawing[(y * zone->width) + x] = circle->c;
-			x++;
-		}
-		y++;
-	}
-}
-int  error(FILE *file,char *str)
-{
-	if(file)
-		fclose(file);
-	ft_putstr(str);
-	return 1;
-}
-int main(int argc, char **argv)
-{
-    t_circle circle;
-    t_zone zone;
-    FILE *file;
-	int ret;
-	if (argc != 2)
-		return(error(NULL,"Error: argument\n"));
-    file=fopen(argv[1],"r");
-    ret = fscanf(file,"%d %d %c",&zone.width,&zone.height,&zone.background);
-	if (ret!=3)
-		return(error(file,"Error: Operation file corrupted\n"));
-    if ((zone.width<0 || zone.width>300) || (zone.height<0 || zone.height>300))
-        return(error(file,"Error: Operation file corrupted\n"));
-    char drawing_zone[zone.width*zone.height];
     int i=0;
-    while(i<zone.width*zone.height)
-        drawing_zone[i++]=zone.background;
-    while((ret=fscanf(file," %c %f %f %f %c",&circle.type,&circle.x,&circle.y,&circle.radius,&circle.c))==5)
+    while(s[i]!='\0')
     {
-        if (circle.radius <= 0.00000000 || (circle.type != 'c' && circle.type != 'C'))
-			return(error(file,"Error: Operation file corrupted\n"));
-		draw_circle(&zone, drawing_zone, &circle);
+        write(1,&s[i],1);
+        i++;
     }
-	if(ret!=-1)
-		return(error(file,"Error: Operation file corrupted4\n"));
-    i = 0;
-	while (i < zone.height)
-	{
-		write(1, &drawing_zone[i*zone.width], zone.width);
-		write(1, "\n", 1);
-		i++;
-	}
-	fclose(file);
+}
+
+int error(char *s,FILE *file)
+{
+    if(file!=NULL)
+        fclose(file);
+    ft_putstr(s);
+    return 1;
+}
+int ft_check(float x,float y,cercle cercle)
+{
+    float dist = sqrt((x-cercle.x)*(x-cercle.x)+(y-cercle.y)*(y-cercle.y));
+    if(dist<=cercle.radius)
+    {
+        if(cercle.radius-dist<1.0)
+            return 2;
+        return 1;
+    }
+    return 0;
+}
+void ft_draw(cercle cercle,char *draw)
+{
+    int i=0;
+    while(i<cercle.height)
+    {
+        int j=0;
+        while(j<cercle.width)
+        {
+            int check=ft_check((float)j,(float)i,cercle);
+            if(check==2 && cercle.type=='c')
+                draw[i*cercle.width + j]=cercle.c;
+            if(check!=0 && cercle.type=='C')
+                draw[i*cercle.width + j]=cercle.c;
+            j++;
+        }
+        i++;
+    }
+}
+int main(int argc,char **argv)
+{
+    if(argc!=2)
+        return error("error:argument\n",NULL);
+    FILE *file;
+    file = fopen(argv[1],"r");
+    if(file == NULL)
+        return error("error\n",file);
+    cercle cercle;
+    int ret;
+    ret = fscanf(file,"%d %d %c ",&cercle.width,&cercle.height,&cercle.bachground);
+    if (ret!=3)
+        return error("error\n",file);
+    if(cercle.width<0||cercle.width>300 || cercle.height<0||cercle.height>300)
+        return error("error\n",file);
+    char draw[cercle.width*cercle.height];
+    int i=0;
+    while(i<cercle.width*cercle.height)
+    {
+        draw[i]=cercle.bachground;
+        i++;
+    }
+    while((ret = fscanf(file,"%c %f %f %f %c ",&cercle.type,&cercle.x,&cercle.y,&cercle.radius,&cercle.c))==5)
+    {
+        if(cercle.radius<=0)
+            return error("error\n",file);
+        ft_draw(cercle,draw);
+    }
+    if(ret!=-1)
+        return error("error\n",file);
+    i=0;
+    while(i<cercle.height)
+    {
+        write(1,&draw[i*cercle.width],cercle.width);
+        write(1,"\n",1);
+        i++;
+    }
+    return 0;
 }
