@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     int ret;
     rect rect;
     ret = fscanf(file,"%d %d %c ",&rect.width,&rect.height,&rect.background);
-    if(ret!=3 || rect.width<0 || rect.width>300 || rect.height<0 || rect.width>300)
+    if(ret!=3 || rect.width<=0 || rect.width>300 || rect.height<=0 || rect.width>300)
         return error("Error: Operation file corrupted\n",file);
     char draw[rect.width*rect.height];
     int i=0;
@@ -70,6 +70,8 @@ int main(int argc, char **argv)
     }
     while((ret=fscanf(file,"%c %f %f %f %f %c ",&rect.type,&rect.x,&rect.y,&rect.rect_width,&rect.rect_height,&rect.c))==6)
     {
+        if(rect.type!='r' && rect.type!='R')
+            return error("Error: Operation file corrupted\n",file);
         if(rect.rect_width<=0 || rect.rect_height<=0)
             return error("Error: Operation file corrupted\n",file);
         ft_draw(rect,draw);

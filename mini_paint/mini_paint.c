@@ -49,18 +49,18 @@ void ft_draw(cercle cercle,char *draw)
 int main(int argc,char **argv)
 {
     if(argc!=2)
-        return error("error:argument\n",NULL);
+        return error("Error: argument\n",NULL);
     FILE *file;
     file = fopen(argv[1],"r");
     if(file == NULL)
-        return error("error\n",file);
+        return error("Error: Operation file corrupted\n",file);
     cercle cercle;
     int ret;
     ret = fscanf(file,"%d %d %c ",&cercle.width,&cercle.height,&cercle.bachground);
     if (ret!=3)
-        return error("error\n",file);
-    if(cercle.width<0||cercle.width>300 || cercle.height<0||cercle.height>300)
-        return error("error\n",file);
+        return error("Error: Operation file corrupted\n",file);
+    if(cercle.width<=0||cercle.width>300 || cercle.height<=0||cercle.height>300)
+        return error("Error: Operation file corrupted\n",file);
     char draw[cercle.width*cercle.height];
     int i=0;
     while(i<cercle.width*cercle.height)
@@ -70,12 +70,14 @@ int main(int argc,char **argv)
     }
     while((ret = fscanf(file,"%c %f %f %f %c ",&cercle.type,&cercle.x,&cercle.y,&cercle.radius,&cercle.c))==5)
     {
+        if(cercle.type!='c' && cercle.type!='C')
+            return error("Error: Operation file corrupted\n",file);
         if(cercle.radius<=0)
-            return error("error\n",file);
+            return error("Error: Operation file corrupted\n",file);
         ft_draw(cercle,draw);
     }
     if(ret!=-1)
-        return error("error\n",file);
+        return error("Error: Operation file corrupted\n",file);
     i=0;
     while(i<cercle.height)
     {
