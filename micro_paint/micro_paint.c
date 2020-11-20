@@ -41,7 +41,7 @@ void ft_draw(rect rect,char *draw)
             int check=ft_check((float)j,(float)i,rect);
             if(check==2 && rect.type=='r')
                 draw[i*rect.width + j]=rect.c;
-            else if((check==2 || check==1) && rect.type=='R')
+            else if(( check==2 || check==1) && rect.type=='R')
                 draw[i*rect.width + j]=rect.c;
             j++;
         }
