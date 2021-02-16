@@ -23,8 +23,8 @@ int ft_check(int i,int j,rect rect)
     if (((i < rect.x || (rect.x + rect.rect_width < i))
 		|| (j < rect.y)) || (rect.y + rect.rect_height < j))
 		return (0);
-	if (((i - rect.x < 1.00000000) || ((rect.x + rect.rect_width) - i < 1.00000000)) ||
-	((j - rect.y < 1.00000000 || ((rect.y + rect.rect_height) - j < 1.00000000))))
+	if (((i - rect.x < 1.0) || ((rect.x + rect.rect_width) - i < 1.0)) ||
+	((j - rect.y < 1.0 || ((rect.y + rect.rect_height) - j < 1.0))))
 		return (2);
     if((i<=(rect.x + rect.rect_width) && i>=rect.x) && (j<=(rect.y + rect.rect_height) && (j>=rect.y)))
         return 1;
