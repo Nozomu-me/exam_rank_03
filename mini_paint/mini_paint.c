@@ -17,17 +17,7 @@ int error(char *s,FILE *file)
     ft_putstr(s);
     return 1;
 }
-int ft_check(float x,float y,cercle cercle)
-{
-    float dist = sqrt((x-cercle.x)*(x-cercle.x)+(y-cercle.y)*(y-cercle.y));
-    if(dist<=cercle.radius)
-    {
-        if(cercle.radius-dist<1.0)
-            return 2;
-        return 1;
-    }
-    return 0;
-}
+
 void ft_draw(cercle cercle,char *draw)
 {
     int i=0;
@@ -36,11 +26,14 @@ void ft_draw(cercle cercle,char *draw)
         int j=0;
         while(j<cercle.width)
         {
-            int check=ft_check((float)j,(float)i,cercle);
-            if(check==2 && cercle.type=='c')
-                draw[i*cercle.width + j]=cercle.c;
-            if(check!=0 && cercle.type=='C')
-                draw[i*cercle.width + j]=cercle.c;
+            float dist = sqrt((j-cercle.x)*(j-cercle.x)+(i-cercle.y)*(i-cercle.y));
+            if(dist<=cercle.radius)
+            {
+                if(cercle.radius-dist<1.0 && (cercle.type=='c' || cercle.type=='C'))
+                    draw[i*cercle.width + j]=cercle.c;
+                else if(cercle.type=='C')
+                    draw[i*cercle.width + j]=cercle.c;
+            }
             j++;
         }
         i++;
